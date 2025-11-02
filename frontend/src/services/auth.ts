@@ -1,44 +1,43 @@
+import axios from "axios";
 import type { formType } from "../utils/form-type";
-import { Users } from "../utils/mock-db";
-import type { userDataType } from "../utils/user-type";
+import type {responseType } from "../utils/response";
 
-export const login =(data:formType)=>{
+export const login =async(data:formType):Promise<responseType>=>{
     console.log("login attempt registered")
     console.log(data.username+" "+data.password);
-    const userFromDB = Users.find((userInDB)=>userInDB.username === data.username);
-    if(!userFromDB){
-        console.log("user not found")
-        return false;
-    };
-    const doesPasswordMatch = userFromDB.password == data.password;
-    if(doesPasswordMatch){
-        localStorage.setItem("userData",userFromDB.username+" "+userFromDB.role);
-        return true;
-    }else{
-        console.log("password did not match")
-        return false;
-    }
-}
-export const signup =(data:formType)=>{
-    console.log("signup attempt registered")
-    console.log(data.username+" "+data.password+" "+data.role);
-    const userFromDB = Users.find((userInDB)=>userInDB.username == data.username);
-    if(userFromDB){
-        console.log("user already exists")
-        return false;
-    }
-    const newUser:userDataType={
-        username:data.username,
-        password:data.password,
-        role:data.role,
-        leavesBalance:{
-        casual:15,
-        sick:15,
-        earned:15
+    try {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/login`,data);
+        
+            localStorage.setItem("token",response.data.token);
+            localStorage.setItem('userData',JSON.stringify(response.data.user));
+            return{
+                isSuccess:true,
+                message:response.data.message
+            }
+        
+    } catch (error:any) {
+        console.log("login failed");
+        return{
+            isSuccess:false,
+            message:error.response?.data?.message || error.message
         }
     }
-    Users.push(newUser);
-    localStorage.setItem("userData",data.username+" "+data.role);
-    return true;
-
+}
+export const signup =async (data:formType):Promise<responseType>=>{
+    console.log("signup attempt registered")
+    console.log(data.username+" "+data.password+" "+data.role);
+    try {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/signup`,data);
+        localStorage.setItem("token",response.data.token);  
+        localStorage.setItem("userData",JSON.stringify(response.data.user)); 
+        return{
+            isSuccess:true,
+            message:response.data.message
+        }
+    } catch (error:any) {
+        return{
+            isSuccess:false,
+            message:error.response?.data?.message || error.message
+        }
+    }
 }

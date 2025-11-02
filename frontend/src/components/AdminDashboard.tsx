@@ -10,9 +10,15 @@ function AdminDashboard() {
     const [allLeaves, setAllLeaves] = useState<leaveArrayItem[]>([]);
     const [refresh, setRefresh] = useState<number>(0);
     const [activeSection, setActiveSection] = useState<string>("leave-requests");
-    useEffect(() => {
-        const leaves = getLeaveRequests();
+
+    async function getData() {
+        const leaves = await getLeaveRequests();
+        console.log("inside dashboard leaves =>  ")
+        // console.log(leaves)
         setAllLeaves(leaves);
+    }
+    useEffect(() => {
+        getData();
     }, [refresh])
 
     const scrollToSection = (sectionId: string, offset: number = 0) => {
@@ -46,7 +52,7 @@ function AdminDashboard() {
 
                 {/* leave requests display  */}
                 <div id="leave-requests" className="mb-8">
-                    <LeavesDisplay allLeaves={allLeaves} setAllLeaves={setAllLeaves} refresh={refresh} setRefresh={setRefresh} displayNotification={displayNotification} />
+                    <LeavesDisplay allLeaves={allLeaves} refresh={refresh} setRefresh={setRefresh} displayNotification={displayNotification} />
                 </div>
 
                 {/* user data display  */}

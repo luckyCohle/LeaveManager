@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react'
-import { getLeaveRequests, type leaveArrayItem } from '../services/leave-requests'
+import {  type leaveArrayItem } from '../services/leave-requests'
 
 interface propType {
     allLeaves: leaveArrayItem[],
     setAllLeaves: React.Dispatch<React.SetStateAction<leaveArrayItem[]>>
 }
 
-function LeavesHistory({ allLeaves, setAllLeaves }: propType) {
+function LeavesHistory({ allLeaves }: propType) {
     const [displayLeaves, setDisplayLeaves] = useState<leaveArrayItem[]>();
     const [viewAll, setViewAll] = useState<boolean>(false);
     useEffect(() => {
-        const leaves = getLeaveRequests();
-        setAllLeaves(leaves);
-    }, [])
+        console.log("leave History")
+        console.log(allLeaves)
+        setDisplayLeaves(allLeaves)
+    }, [allLeaves])
 
     useEffect(() => {
 

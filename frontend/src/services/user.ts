@@ -1,10 +1,24 @@
-import { Users } from "../utils/mock-db"
+import axios from "axios";
 
-export const getUsers = ()=>{
-    return Users;
+import type { userDataType } from "../utils/user-type";
+
+export const getUsers = async():Promise<userDataType[]>=>{
+    try {
+        const response =await axios.get(`${import.meta.env.VITE_API_URL}/user/getAllUsers`);
+        return response.data.allUsers || [];
+    } catch (error) {
+        console.log("error while fetching Data"+error)   
+        return [];
+    }
 }
 
-export const getUserData =(username:string)=>{
-    const data =Users.find(item => item.username= username);
-    return data;
+export const getUserData =async (userId:string):Promise<userDataType|null>=>{
+    try {
+        const response=await axios.get(`${import.meta.env.VITE_API_URL}/user/data/${userId}`)
+        return response.data.userData;
+    } catch (error) {
+        console.log("data retrival failed");
+        console.log(error);
+        return null;
+    }
 }

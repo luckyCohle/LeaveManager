@@ -1,33 +1,36 @@
+import axios from "axios";
 import type { approveLeaveType, leaveApplyType } from "../utils/leave-type";
-import { Users } from "../utils/mock-db";
-import { generateId } from "../utils/randomId";
 import type { leaveType } from "../utils/user-type";
+import { getUserData } from "./user";
+import { generateId } from "../utils/randomId";
+
+
 //function for staff to apply for a leave
-export const applyForLeave = (leaveFormData: leaveApplyType): boolean => {
+export const applyForLeave = async (leaveFormData: leaveApplyType): Promise<boolean> => {
     //calculating today's date
-    const today = new Date().toISOString().split("T")[0];
+    const today = leaveFormData.requestedOn.split("T")[0];
     //calculating total number of leaves
     const totalLeaves = getTotalLeaves(leaveFormData.fromDate, leaveFormData.toDate);
     //basic validation
-    if (totalLeaves > 15 || totalLeaves< 0) {
+    if (totalLeaves< 0) {
         console.log("requested Leave is invalid");
         return false;
     }
+    let invalidLeave;
     //finding particula user from the array and updating his/her data
-    const user = Users.find(u => u.username === leaveFormData.requestedBy);
-    if (!user) return false;
-    let invalidLeave:boolean = false
+    const user = await getUserData(leaveFormData.requestedBy);
+    if(!user)return false;
     //checking if user has enough leaves balance to make this request
     if(leaveFormData.leaveType=="casual"){
-        if (totalLeaves<user.leavesBalance.casual) {
+        if (totalLeaves>user.leavesBalance.casual) {
             invalidLeave=true;
         }
     }else if(leaveFormData.leaveType=="earned"){
-         if (totalLeaves<user.leavesBalance.earned) {
+         if (totalLeaves>user.leavesBalance.earned) {
             invalidLeave=true;
         }
     }else{
-         if (totalLeaves<user.leavesBalance.sick) {
+         if (totalLeaves>user.leavesBalance.sick) {
             invalidLeave=true;
         }
     }
@@ -37,7 +40,7 @@ export const applyForLeave = (leaveFormData: leaveApplyType): boolean => {
     }
     
     const leaveHistoryItem: leaveType = {
-        id: generateId(),
+        id:generateId(),
         requestedOn: today,
         fromDate: leaveFormData.fromDate,
         toDate: leaveFormData.toDate,
@@ -46,11 +49,16 @@ export const applyForLeave = (leaveFormData: leaveApplyType): boolean => {
         status: "requested",
         reason: leaveFormData.reason
     };
+    const userId = leaveFormData.requestedBy;
 
-    if (!user.leaveHistory) {
-        user.leaveHistory = [];
+    try {
+        const response= await axios.post(`${import.meta.env.VITE_API_URL}/leaves/create`,{userId,leaveRequest:leaveHistoryItem})
+        console.log(response.data)
+        return true;
+    } catch (error) {
+        console.log(error);
+        return false;
     }
-    user.leaveHistory.push(leaveHistoryItem);
 
     return true;
 };
@@ -81,24 +89,10 @@ const getDayFromDate = (date:Date) => {
 
 //function for admin to approve or deny leave request
 export const approveOrDenyLeave = (approveForm: approveLeaveType) => {
-    
-    const user = Users.find(u => u.username === approveForm.staffName);
-    if (!user || !user.leaveHistory) return;
-
-    const requestIndex = user.leaveHistory.findIndex(lh => lh.id === approveForm.requestId);
-    if (requestIndex === -1) return;
-
-    const leaveRequest = user.leaveHistory[requestIndex];
-
-    if (approveForm.isApproved) {
-        leaveRequest.status = "approved";
-    } else {
-        leaveRequest.status = "denied";
-        leaveRequest.rejectionComment = approveForm.rejectionComment || "Not provided";
+    try {
+        axios.post(`${import.meta.env.VITE_API_URL}/leaves/approveOrDeny`,approveForm)
+        return true;
+    } catch (error) {
+        return false;
     }
-
-    leaveRequest.decisionDate = approveForm.approvedOn;
-    leaveRequest.reviewedBy = approveForm.approvedBy;
-    console.log("approval success")
-    return true;
 };

@@ -6,11 +6,15 @@ function UsersDisplay() {
     const [users, setUsers] = useState<userDataType[]>();
     const [viewAll, setViewAll] = useState<boolean>(false);
     const [displayUsers, setDisplayUsers] = useState<userDataType[]>();
+    
 
-    useEffect(() => {
-        const fetchedUsers = getUsers();
+    async function getData() {
+        const fetchedUsers:userDataType[] = await getUsers()||[];
         setUsers(fetchedUsers);
         setDisplayUsers(fetchedUsers?.slice(0, 3));
+    }
+    useEffect(() => {
+        getData();
     }, [])
 
     useEffect(() => {

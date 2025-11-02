@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build":"tsc -b",
-    "dev":"tsc -b && nodemon ./dist/index.js",
-    "start":"nodemon ./dist/index.js"
+    "dev":"nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -13,16 +11,11 @@
   "type": "commonjs",
   "description": "",
   "dependencies": {
-    "@types/cors": "^2.8.19",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "prisma": "^6.18.0"
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.5",
-    "@types/node": "^24.9.2",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.3"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.2"
   }
 }

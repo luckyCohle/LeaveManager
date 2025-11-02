@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
-import { getLeaveRequests, type leaveArrayItem } from '../services/leave-requests'
 import { approveOrDenyLeave } from '../services/leave';
 import type { approveLeaveType } from '../utils/leave-type';
 import FilterSortPanel from './FilterSortPanel';
+import type { leaveArrayItem } from '../services/leave-requests';
 
 interface propType {
     allLeaves?: leaveArrayItem[],
-    setAllLeaves: React.Dispatch<React.SetStateAction<leaveArrayItem[]>>,
+    // setAllLeaves: React.Dispatch<React.SetStateAction<leaveArrayItem[]>>,
     refresh: number,
     setRefresh: React.Dispatch<React.SetStateAction<number>>,
     displayNotification: (message: string, type: "success" | "faliure") => void
 }
-function LeavesDisplay({ setAllLeaves, refresh, setRefresh, displayNotification }: propType) {
+function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: propType) {
 
     const [displayLeaves, setDisplayLeaves] = useState<leaveArrayItem[]>();
     const [viewAll, setViewAll] = useState<boolean>(false);
@@ -23,12 +23,11 @@ function LeavesDisplay({ setAllLeaves, refresh, setRefresh, displayNotification 
     const [loadInside, setLoadInside] = useState<"approve" | "deny" | null>(null);
     const [isFiltered, setIsFiltered] = useState<boolean>(false);
     useEffect(() => {
-        const leaves = getLeaveRequests();
-        setAllLeaves(leaves);
-        const requests = leaves.filter((leave) => leave.status === "requested");
+        const leaves = allLeaves;
+        const requests = leaves?.filter((leave) => leave.status === "requested");
         setLeaveRequests(requests);
 
-    }, [refresh])
+    }, [refresh,allLeaves])
 
     useEffect(() => {
 
@@ -83,9 +82,13 @@ function LeavesDisplay({ setAllLeaves, refresh, setRefresh, displayNotification 
             requestId: id
         }
 
-        approveOrDenyLeave(approveLeaveBody);
+        const isSuccess =approveOrDenyLeave(approveLeaveBody);
         await handleLoading(id, 'approve');
-        displayNotification("Leave Approved", "success")
+        if(isSuccess){
+            displayNotification("Leave Approved", "success")
+        }else{
+            displayNotification("Leave Approval Failed", "faliure")
+        }
         setRefresh((prev) => prev + 1);
     }
 
@@ -99,12 +102,16 @@ function LeavesDisplay({ setAllLeaves, refresh, setRefresh, displayNotification 
             approvedOn: new Date().toISOString().split('T')[0],
         };
 
-        approveOrDenyLeave(denyLeaveBody);
+        let isSuccess =approveOrDenyLeave(denyLeaveBody);
         await handleLoading(id, "deny");
         setComment("");
         setEnterComment(false);
         setSelectedRequest(null);
-        displayNotification("Leave Denied", "faliure")
+        if(isSuccess){
+            displayNotification("Leave Denied", "faliure")
+        }else{
+            displayNotification("System Error :Leave was not Denied", "faliure")
+        }
         setRefresh((prev) => prev + 1);
     };
 

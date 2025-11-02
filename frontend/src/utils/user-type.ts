@@ -1,4 +1,5 @@
 export interface userDataType{
+    _id:string,
     username:string,
     password:string,
     role?:"Admin"|"Staff",
@@ -11,7 +12,7 @@ export interface userDataType{
 }
 
 export interface leaveType{
-    id:string,
+    id?:string,
     category:"sick"|"casual"|"earned",
     status:"requested"|"approved"|"denied",
     requestedOn:string,
