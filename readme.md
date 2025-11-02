@@ -33,13 +33,13 @@ Leave Manager is a lightweight HR tool that enables organizations to manage empl
 ---
 
 ## 📂 Project Structure
-
+```sh
 Leave-Manager/
 │
 ├── backend/
 │ ├── models/ # MongoDB schemas(User, Leave History)
 │ ├── routes/ # API routes for Auth & Leave operations
-│ └── server.js # Express server entry point
+│ └── index.js # Express server entry point
 │
 └── frontend/
 ├── src/
@@ -50,7 +50,7 @@ Leave-Manager/
 │ ├── assets/ # Static files
 │ └── App.tsx / main.tsx
 └── index.html
-
+```
 ---
 
 ## 🛠️ Setup Instructions
