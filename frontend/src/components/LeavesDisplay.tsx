@@ -6,22 +6,32 @@ import type { leaveArrayItem } from '../services/leave-requests';
 
 interface propType {
     allLeaves?: leaveArrayItem[],
-    // setAllLeaves: React.Dispatch<React.SetStateAction<leaveArrayItem[]>>,
     refresh: number,
     setRefresh: React.Dispatch<React.SetStateAction<number>>,
     displayNotification: (message: string, type: "success" | "faliure") => void
 }
 function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: propType) {
-
+    //list of leaves requests being displayed on the screen
     const [displayLeaves, setDisplayLeaves] = useState<leaveArrayItem[]>();
+    //to toggle between show less and view all 
     const [viewAll, setViewAll] = useState<boolean>(false);
+    //to store all requests with status requested
     const [leaveRequest, setLeaveRequests] = useState<leaveArrayItem[]>();
+    //to toggle open and close deny request modal
     const [enterComment, setEnterComment] = useState<boolean>(false);
+    //to select a particular request ,to unable deny modal opening
     const [selectedRequest, setSelectedRequest] = useState<string | null>("");
+    //to store the rejection comment
     const [comment, setComment] = useState<string>("");
+    // to dispaly loading when approve or deny is clicked
     const [load, setLoad] = useState<string | null>(null);
+    //to select which button to show loading inside
     const [loadInside, setLoadInside] = useState<"approve" | "deny" | null>(null);
+    // to manage conflict between view all and filter functionality 
+    // when is filtered is true display will become show all
     const [isFiltered, setIsFiltered] = useState<boolean>(false);
+
+    //gets leave from AdminDashboard and selects one with status requested
     useEffect(() => {
         const leaves = allLeaves;
         const requests = leaves?.filter((leave) => leave.status === "requested");
@@ -30,7 +40,7 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
     }, [refresh,allLeaves])
 
     useEffect(() => {
-
+        //shows 3 or all requests based on the value of viewAll
         if (viewAll && leaveRequest) {
             setDisplayLeaves(leaveRequest)
         } else {
@@ -42,25 +52,14 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
     function handleViewAllClick() {
 
         if (isFiltered) {
-            setViewAll(true);
+            setViewAll(true);//view all will be true when ever isFiltered is selected
         } else {
-            setViewAll((prev) => !prev);
+            setViewAll((prev) => !prev);//toggle in other case
         }
-        setIsFiltered(false);
+        setIsFiltered(false);//when a filter is applied and user clicks viewAll it would disable the filter
+                             //show all the requests
     }
-
-    function handleLoading(id: string, button: "approve" | "deny") {
-        return new Promise<void>((resolve) => {
-            setLoad(id);
-            setLoadInside(button);
-            setTimeout(() => {
-                setLoad(null);
-                setLoadInside(null);
-                resolve();
-            }, 2000);
-        });
-    }
-
+    //function to handle form item change and simple button clicks
     const handleCommentChange = (e: any) => {
         setComment(e.target.value);
     }
@@ -73,27 +72,38 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
         setComment("");
         setSelectedRequest(null)
     }
+    //function to handle approve button click
     const handleApprove = async (id: string, username: string) => {
         console.log(`Approved leave request: ${id}`);
+        //parameter body
         const approveLeaveBody: approveLeaveType = {
             approvedOn: new Date().toISOString().split('T')[0],
             isApproved: true,
             staffName: username,
             requestId: id
         }
+        //start loading
+        setLoad(id);
+        setLoadInside("approve");
 
-        const isSuccess =approveOrDenyLeave(approveLeaveBody);
-        await handleLoading(id, 'approve');
+        //function call
+        const isSuccess = await approveOrDenyLeave(approveLeaveBody);
+        //display message based on the respose from server
         if(isSuccess){
             displayNotification("Leave Approved", "success")
         }else{
             displayNotification("Leave Approval Failed", "faliure")
         }
+        //stop loadig
+        setLoad(null);
+        setLoadInside(null);
+        //tell page to refetch the data
         setRefresh((prev) => prev + 1);
     }
 
     const handleDeny = async (id: string, username: string) => {
         console.log(`Denied leave request: ${id} with comment: ${comment}`);
+        //paramenter body
         const denyLeaveBody: approveLeaveType = {
             requestId: id,
             staffName: username,
@@ -101,20 +111,29 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
             rejectionComment: comment,
             approvedOn: new Date().toISOString().split('T')[0],
         };
+        //start loading
+        setLoad(id);
+        setLoadInside("approve");
 
-        let isSuccess =approveOrDenyLeave(denyLeaveBody);
-        await handleLoading(id, "deny");
+        let isSuccess =await approveOrDenyLeave(denyLeaveBody);
+        //nullify all feilds once request has been made
         setComment("");
         setEnterComment(false);
         setSelectedRequest(null);
+        //display appropriate message
         if(isSuccess){
             displayNotification("Leave Denied", "faliure")
         }else{
             displayNotification("System Error :Leave was not Denied", "faliure")
         }
+        //stop laod
+        setLoad(null);
+        setLoadInside(null);
+        //refetch data
         setRefresh((prev) => prev + 1);
     };
 
+    //filter the requests displayed on screen based on the parameter selected
     function filterDisplay(startDate: string, endDate: string, days: string) {
         let requestArray: leaveArrayItem[] = displayLeaves || [];
         setIsFiltered(true);
@@ -129,17 +148,17 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
         }
         setDisplayLeaves(requestArray);
     }
-
+    //sort the displayed requests based on th paramenter selected and the order selected
     function sortDisplay(sortBy: "start" | "end" | "days" | "none", ascending: boolean) {
         if (!leaveRequest) return
         let sortedLeaves = [...leaveRequest];
         console.log(sortBy+" "+ascending);
+        //switch case to sort he array based on the parament and order
         switch (sortBy) {
             case "start":
                 sortedLeaves.sort((a, b) => {
                     const dateA = new Date(a.fromDate).getTime();
                     const dateB = new Date(b.fromDate).getTime();
-                    // console.log("in start");
                     return ascending ? dateA - dateB : dateB - dateA;
                 });
                 break;
@@ -148,14 +167,12 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
                 sortedLeaves.sort((a, b) => {
                     const dateA = new Date(a.toDate).getTime();
                     const dateB = new Date(b.toDate).getTime();
-                    // console.log("in end")
                     return ascending ? dateA - dateB : dateB - dateA;
                 });
                 break;
 
             case "days":
                 sortedLeaves.sort((a, b) => {
-                    // console.log("in days")
                     return ascending ? a.totalLeaves - b.totalLeaves : b.totalLeaves - a.totalLeaves;
                 });
                 break;
@@ -166,7 +183,7 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
                 sortedLeaves=[...leaveRequest]
                 break;
         }
-        console.log(sortedLeaves)
+        // set isFiltered true so that all the filtered requests are shown and store these requests
         setIsFiltered(true)
         setDisplayLeaves(sortedLeaves);
     }
@@ -239,6 +256,7 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
 
                                 {/* Action Buttons or rejection comment form */}
                                 {
+                                    //either action buttons or deny request form will be shown based on the enter comment value and weather the particular request is selected
                                     // show dialog to enter comment if user clicks deny
                                     enterComment && selectedRequest == request.id ? <div className='flex flex-col justify-around items-center gap-2'>
                                         <h3>Enter the Reason for rejection below</h3>
@@ -283,6 +301,7 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
                             </div>
                         ))
                     ) : (
+                        // in case  no requests are fetched from the server or no requests with pending status found
                         <div className="p-12 text-center">
                             <h3 className="text-lg font-medium text-gray-900 mb-1">
                                 No pending requests
@@ -293,7 +312,7 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
                         </div>
                     )}
                 </div>
-                {/* Centered View All Button */}
+                {/* View All Button */}
                 {
                     leaveRequest && leaveRequest.length > 3 && <div className="flex justify-center py-4">
                         <button

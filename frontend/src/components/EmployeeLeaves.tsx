@@ -4,13 +4,13 @@ import type { leaveType } from '../utils/user-type';
 interface propType {
     allLeaves: leaveType[],
 }
-
+//simalar to leaveDisplay with minor changes
 function EmpolyeeLeaves({ allLeaves }: propType) {
+    //leaves to be displayed
     const [displayLeaves, setDisplayLeaves] = useState<leaveType[]>();
+    //toggle viewAll 
     const [viewAll, setViewAll] = useState<boolean>(false);
     useEffect(() => {
-        console.log("leave History")
-        console.log(allLeaves)
         setDisplayLeaves(allLeaves)
     }, [allLeaves])
 
@@ -23,7 +23,7 @@ function EmpolyeeLeaves({ allLeaves }: propType) {
         }
 
     }, [viewAll, allLeaves])
-
+    //get staus card styling based on status value
     function getStatusStyling(status: "requested" | "approved" | "denied") {
         if (status == "requested") {
             return "bg-yellow-100 text-yellow-800";
@@ -118,7 +118,7 @@ function EmpolyeeLeaves({ allLeaves }: propType) {
                         </div>
                     )}
                 </div>
-                {/* Centered View All Button */}
+                {/* View All Button */}
                 {
                     allLeaves && allLeaves.length > 3 && <div className="flex justify-center py-4">
                         <button

@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const User = require('./models/user');
 const bcrypt = require('bcrypt');
 dotenv.config();
+//this file is all about initializing the database and seeding mock data in the database 
  const Users= [
   {
     username: "john.doe",

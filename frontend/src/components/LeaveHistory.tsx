@@ -7,16 +7,16 @@ interface propType {
 }
 
 function LeavesHistory({ allLeaves }: propType) {
+    //leave requests to be dispalyed on the screen
     const [displayLeaves, setDisplayLeaves] = useState<leaveArrayItem[]>();
+    //view all and show less toggle
     const [viewAll, setViewAll] = useState<boolean>(false);
     useEffect(() => {
-        console.log("leave History")
-        console.log(allLeaves)
         setDisplayLeaves(allLeaves)
     }, [allLeaves])
 
     useEffect(() => {
-
+        //show 3 or all requests based on the vlaue of viewAll state
         if (viewAll && allLeaves) {
             setDisplayLeaves(allLeaves)
         } else {
@@ -25,6 +25,7 @@ function LeavesHistory({ allLeaves }: propType) {
 
     }, [viewAll, allLeaves])
 
+    //to get the styling for the status badge based on the status value
     function getStatusStyling(status: "requested" | "approved" | "denied") {
         if (status == "requested") {
             return "bg-yellow-100 text-yellow-800";
@@ -38,7 +39,7 @@ function LeavesHistory({ allLeaves }: propType) {
 
     return (
         <div className="max-w-4xl mx-auto">
-            {/* Leave History Section */}
+            {/* Header Section */}
             <div className=" rounded-lg bg-white shadow-sm border border-gray-200">
                 <div className="px-6 py-4 border-b border-gray-200">
                     <div className="mb-8">
@@ -108,7 +109,7 @@ function LeavesHistory({ allLeaves }: propType) {
                                 }
                             </div>
                         ))
-                    ) : (
+                    ) : (//in case no history is found
                         <div className="p-12 text-center">
                             <h3 className="text-lg font-medium text-gray-900 mb-1">
                                 No Leave History found
@@ -119,7 +120,7 @@ function LeavesHistory({ allLeaves }: propType) {
                         </div>
                     )}
                 </div>
-                {/* Centered View All Button */}
+                {/* View All Button */}
                 {
                     allLeaves && allLeaves.length > 3 && <div className="flex justify-center py-4">
                         <button

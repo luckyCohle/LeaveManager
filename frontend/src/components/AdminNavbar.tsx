@@ -7,8 +7,10 @@ interface propType{
 }
 function AdminNavbar({scrollToSection,activeSection}:propType) {
     const navigate = useNavigate();
+    //logout by removing data from localstorage
     function handleLogout(){
         localStorage.removeItem("userData");
+        localStorage.removeItem('token');
         navigate("/auth");
     }
   return (

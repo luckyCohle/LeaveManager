@@ -12,7 +12,7 @@ export interface userDataType{
 }
 
 export interface leaveType{
-    id?:string,
+    id:string,
     category:"sick"|"casual"|"earned",
     status:"requested"|"approved"|"denied",
     requestedOn:string,

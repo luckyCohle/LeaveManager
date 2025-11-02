@@ -5,10 +5,10 @@ import EmployeeDashboard from "../components/EmployeeDashboard";
 
 function DashBoard() {
     const navigate = useNavigate();
-    const [role,setRole] = useState<string>();
+    const [role,setRole] = useState<string>();//role of the user admiin or staff
     useEffect(()=>{
         if(!localStorage.getItem("userData")){
-            navigate("/auth");
+            navigate("/auth");//if no data found in localstorage navigate to login  page
             return;
         }
         const userData = localStorage.getItem("userData");
@@ -16,6 +16,7 @@ function DashBoard() {
           navigate("/auth");
            return;
         }
+        //retrive the user data from localstorage and get the user role
         const userDataJson = JSON.parse(userData);
         const userRole=userDataJson.role;
         setRole(userRole);
@@ -27,6 +28,7 @@ function DashBoard() {
 
   return (
     <div>
+      {/* dispaly DashBoard based on role  */}
       {role === "Admin" ? <AdminDashboard /> : <EmployeeDashboard />}
     </div>
   );

@@ -5,7 +5,12 @@ import { getUserData } from "./user";
 import { generateId } from "../utils/randomId";
 
 
-//function for staff to apply for a leave
+/**
+ * sends leave application to create new leave requests
+ * Sends a POST request to the backend
+ * @param {leaveApplyType} leaveFormData - contains feilds like fromDate, toDate and reason , for leave application
+ * @returns {Promise<boolean>} A promise resolving to a boolean indicating success or failure.
+ */
 export const applyForLeave = async (leaveFormData: leaveApplyType): Promise<boolean> => {
     //calculating today's date
     const today = leaveFormData.requestedOn.split("T")[0];
@@ -38,7 +43,7 @@ export const applyForLeave = async (leaveFormData: leaveApplyType): Promise<bool
         console.log("you don't have sufficient number of leaves left");
         return false;
     }
-    
+    //requset body
     const leaveHistoryItem: leaveType = {
         id:generateId(),
         requestedOn: today,
@@ -59,11 +64,8 @@ export const applyForLeave = async (leaveFormData: leaveApplyType): Promise<bool
         console.log(error);
         return false;
     }
-
-    return true;
 };
-
-//function to get total leaves
+// helper function to get total leaves based on from and todate excluding holidays
 const getTotalLeaves = (from:string,to:string)=>{ 
     const d2 = new Date(to);
     const d1 = new Date(from);
@@ -88,9 +90,15 @@ const getDayFromDate = (date:Date) => {
 };
 
 //function for admin to approve or deny leave request
-export const approveOrDenyLeave = (approveForm: approveLeaveType) => {
+/**
+ * sends approve or deny leave request for a particular to the backend
+ * Sends a POST request to the backend and returns the output as boolean
+ * @param {approveLeaveType} approveForm - have filds like rejection comment, requestId etc
+ * @returns {Promise<boolean>} A promise resolving to a boolean indicating success or failure.
+ */
+export const approveOrDenyLeave = async (approveForm: approveLeaveType):Promise<boolean> => {
     try {
-        axios.post(`${import.meta.env.VITE_API_URL}/leaves/approveOrDeny`,approveForm)
+        await axios.post(`${import.meta.env.VITE_API_URL}/leaves/approveOrDeny`,approveForm)
         return true;
     } catch (error) {
         return false;

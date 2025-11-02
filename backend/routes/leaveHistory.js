@@ -3,7 +3,7 @@ const User = require('../models/user');
 const express = require('express');
 
 const router = express.Router();
-
+//route to get all the requests
 router.get('/getAllRequests', async (req, res) => {
   console.log("getall leaves requsts recived")
   try {

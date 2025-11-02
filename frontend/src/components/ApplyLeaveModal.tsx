@@ -1,26 +1,27 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 interface ApplyLeaveModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: ( fromDate: string, toDate: string, reason: string , category:"casual"|"sick"|"earned" ) => void;
+  onSubmit: (fromDate: string, toDate: string, reason: string, category: "casual" | "sick" | "earned") => void;
 }
 
 export default function ApplyLeaveModal({ isOpen, onClose, onSubmit }: ApplyLeaveModalProps) {
-  
+  //form fields of application form
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [reason, setReason] = useState("");
-  const [category,setCategory] = useState<"casual"|"sick"|"earned">("casual");
+  const [category, setCategory] = useState<"casual" | "sick" | "earned">("casual");
 
   if (!isOpen) return null;
-
   const handleSubmit = () => {
     if (!fromDate || !toDate) {
-      alert("Please select From and To dates");
+      toast.error("Please select From and To dates");
       return;
     }
-    onSubmit( fromDate, toDate, reason ,category);
+    onSubmit(fromDate, toDate, reason, category);
+    //empty all feilds
     setFromDate("");
     setToDate("");
     setReason("");
@@ -29,9 +30,9 @@ export default function ApplyLeaveModal({ isOpen, onClose, onSubmit }: ApplyLeav
 
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-      
+
       <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md animate-fadeIn">
-        
+
         <h2 className="text-xl font-bold mb-4 text-gray-800">Apply for Leave</h2>
 
         {/* Date Inputs */}
@@ -67,19 +68,19 @@ export default function ApplyLeaveModal({ isOpen, onClose, onSubmit }: ApplyLeav
             />
           </div>
         </div>
-       {/* Category */}
-<div>
-  <label className="block text-gray-600 text-sm mb-1">Leave Category</label>
-  <select
-    value={category}
-    onChange={(e) => setCategory(e.target.value as "casual" | "sick" | "earned")}
-    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
-  >
-    <option value="casual">Casual</option>
-    <option value="sick">Sick</option>
-    <option value="earned">Earned</option>
-  </select>
-</div>
+        {/* Category */}
+        <div>
+          <label className="block text-gray-600 text-sm mb-1">Leave Category</label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value as "casual" | "sick" | "earned")}
+            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
+          >
+            <option value="casual">Casual</option>
+            <option value="sick">Sick</option>
+            <option value="earned">Earned</option>
+          </select>
+        </div>
 
 
         {/* Buttons */}

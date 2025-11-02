@@ -105,6 +105,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
+//route to getAllUsers
+
 router.get('/getAllUsers',async (req,res)=>{
     try {
         const allUsers = await User.find({},"-password");
@@ -118,6 +120,8 @@ router.get('/getAllUsers',async (req,res)=>{
         })
     }
 })
+
+//get data of specific user
 
 router.get('/data/:userId',async (req,res)=>{
     const userId = req.params.userId;
@@ -139,6 +143,8 @@ router.get('/data/:userId',async (req,res)=>{
         })
     }
 })
+
+//get all the leave requests by a specific users
 
 router.get('/leaves/:userId', async (req, res) => {
     const userId = req.params.userId;

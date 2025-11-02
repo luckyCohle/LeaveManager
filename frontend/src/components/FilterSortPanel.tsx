@@ -7,11 +7,13 @@ interface propType {
     sort: (sortBy: "start" | "end" | "days" | "none", ascending: boolean) => void
 }
 function FilterSortPanel({ setViewAll, setIsFiltered, filter, sort }: propType) {
+    //feilds to set filter and sort paramenters
     const [startDate, setStartDate] = useState<string>("");
     const [endDate, setEndDate] = useState<string>("");
     const [days, setDays] = useState<string>(""); // Keep as string for input
     const [sortby, setSortby] = useState<"start" | "end" | "days" | "none">("none")
     const [sortOrder, setSortOrder] = useState<"asc" | "dsc" | undefined>();
+    // functions to handle change in feilds
     function handleStartChange(e: any) {
         setStartDate(e.target.value);
     }
@@ -31,6 +33,7 @@ function FilterSortPanel({ setViewAll, setIsFiltered, filter, sort }: propType) 
         console.log("apply sort clicked")
         sort(sortby, sortOrder == "dsc"?false:true);
     }
+    //reset all feilds
     function reset() {
         setStartDate("");
         setEndDate("");

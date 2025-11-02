@@ -7,15 +7,22 @@ import ApplyLeaveModal from "./ApplyLeaveModal";
 import { applyForLeave } from "../services/leave";
 import type { leaveApplyType } from "../utils/leave-type";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function EmployeeDashboard() {
+  //store userData
   const [userData, setUserData] = useState<userDataType>();
+  //toggle aopend and close apply leave modal
   const [openModal,setOpenModal] = useState<boolean>(false);
+  //to refetch data from server
   const [refresh,setRefresh] = useState<number>(0);
-
+  const naviagate = useNavigate();
   async function getData() {
     const stored = localStorage.getItem("userData");
-    if (!stored) return;
+    if (!stored){
+      naviagate("/auth");
+      return;
+    };
     const userId = JSON.parse(stored).userId;
     const data = await getUserData(userId);
     if (!data) return;
@@ -26,6 +33,7 @@ function EmployeeDashboard() {
     getData();
   }, [refresh]);
 
+  //handle submit of leave application form
   async function handleApplyLeaveSubmit(fromDate: string, toDate: string, reason: string,category:"casual"|"sick"|"earned"):Promise<void> {
     const reqBody:leaveApplyType={
       fromDate,
@@ -37,6 +45,7 @@ function EmployeeDashboard() {
 
     }
     const isSuccess =await applyForLeave(reqBody);
+    //display message based on server response
     if(isSuccess){
       setRefresh((prev)=>prev+1);
       toast.success("Applied for Leave Successfully")
@@ -50,7 +59,7 @@ function EmployeeDashboard() {
       {/* Sidebar */}
       <div className="w-64 bg-white h-screen sticky top-0 left-0 shadow-lg border-r flex flex-col p-6">
         <h2 className="text-2xl font-bold text-blue-600 mb-6">
-          Leave System
+          Leave Manager
         </h2>
 
         <nav className="flex flex-col gap-3 text-gray-700">
@@ -86,7 +95,7 @@ function EmployeeDashboard() {
           </div>
         </div>
 
-        {/* Cards Section */}
+        {/* leave Balance Section */}
         <section>
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Leave Balance</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

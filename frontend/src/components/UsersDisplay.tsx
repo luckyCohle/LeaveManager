@@ -3,8 +3,11 @@ import type { userDataType } from '../utils/user-type';
 import { getUsers } from '../services/user';
 
 function UsersDisplay() {
+    //store all users
     const [users, setUsers] = useState<userDataType[]>();
+    //toggle view all and show less
     const [viewAll, setViewAll] = useState<boolean>(false);
+    //users to be dispalyed on the screen
     const [displayUsers, setDisplayUsers] = useState<userDataType[]>();
     
 
@@ -18,6 +21,7 @@ function UsersDisplay() {
     }, [])
 
     useEffect(() => {
+        //show 3 or all users based on value of viewAll
         if (users) {
             if (viewAll) {
                 setDisplayUsers(users);
@@ -114,7 +118,7 @@ function UsersDisplay() {
                                 </div>
                             </div>
                         ))
-                    ) : (
+                    ) : (//in case no employee data is there
                         <div className="p-12 text-center">
                             <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -129,7 +133,7 @@ function UsersDisplay() {
                     )}
                 </div>
 
-                {/* Centered View All Button */}
+                {/* View All Button */}
                 {users && users.length > 3 && (
                     <div className="flex justify-center py-4">
                         <button
