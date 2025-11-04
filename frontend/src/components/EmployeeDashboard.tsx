@@ -54,6 +54,11 @@ function EmployeeDashboard() {
     }
   }
 
+  function handleLogout() {
+    localStorage.clear();
+    naviagate("/auth");
+  }
+
   return (
     <div className="min-h-screen flex bg-gray-100">
       {/* Sidebar */}
@@ -75,7 +80,8 @@ function EmployeeDashboard() {
         </nav>
 
         <div className="mt-auto">
-          <button className="flex items-center gap-2 w-full p-2 text-red-600 rounded-md hover:bg-red-100 transition">
+          <button className="flex items-center gap-2 w-full p-2 text-red-600 rounded-md hover:bg-red-100 transition"
+          onClick={()=>handleLogout()}>
             <LogOut className="w-5 h-5" />
             Logout
           </button>
