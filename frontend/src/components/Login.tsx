@@ -10,6 +10,7 @@ function Login() {
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const [loginForm, setLoginForm] = useState<formType>({ username: "", password: "" })
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading,setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const handleForm = (e: any) => {
     const { name, value } = e.target;
@@ -17,6 +18,7 @@ function Login() {
   }
   const handleSubmit = async () => {
     let res:responseType;
+    setLoading(true);
     if (isLogin) {
       res = await login(loginForm);
     } else {
@@ -30,6 +32,7 @@ function Login() {
     }else{
       toast.error(res.message);
     }
+    setLoading(false);
   }
   return (
     <div className="bg-white shadow-lg rounded-2xl p-8 w-96 ">
@@ -103,7 +106,7 @@ function Login() {
 
         <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
           onClick={handleSubmit}>
-          {isLogin ? "Login" : "Signup"}
+          {loading? "Loading..." : isLogin ? "Login" : "Signup"}
         </button>
       </div>
 

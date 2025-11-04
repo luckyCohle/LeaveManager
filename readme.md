@@ -4,6 +4,9 @@ Leave Manager is a lightweight HR tool that enables organizations to manage empl
 
 ---
 
+## Deployed Website Link
+  https://leave-manager-ten.vercel.app/
+
 ## 🚀 Features
 
 ### 👨‍💼 Employee
