@@ -18,7 +18,7 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
     //to store all requests with status requested
     const [leaveRequest, setLeaveRequests] = useState<leaveArrayItem[]>();
     //to toggle open and close deny request modal
-    const [enterComment, setEnterComment] = useState<boolean>(false);
+     const [enterComment, setEnterComment] = useState<boolean>(false);
     //to select a particular request ,to unable deny modal opening
     const [selectedRequest, setSelectedRequest] = useState<string | null>("");
     //to store the rejection comment
@@ -229,13 +229,13 @@ function LeavesDisplay({allLeaves, refresh, setRefresh, displayNotification }: p
                                     <div className="flex flex-col">
                                         <p className="text-sm text-gray-500 mb-1">From Date</p>
                                         <p className="text-sm font-medium text-gray-900">
-                                            {request.fromDate}
+                                            {request.fromDate.split("T")[0]}
                                         </p>
                                     </div>
                                     <div className="flex flex-col">
                                         <p className="text-sm text-gray-500 mb-1">To Date</p>
                                         <p className="text-sm font-medium text-gray-900">
-                                            {request.toDate}
+                                            {request.toDate.split("T")[0] }
                                         </p>
                                     </div>
                                     <div className="flex flex-col">
