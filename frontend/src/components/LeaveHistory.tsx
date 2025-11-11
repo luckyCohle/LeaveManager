@@ -76,13 +76,13 @@ function LeavesHistory({ allLeaves }: propType) {
                                     <div className="flex flex-col">
                                         <p className="text-sm text-gray-500 mb-1">From Date</p>
                                         <p className="text-sm font-medium text-gray-900">
-                                            {request.fromDate}
+                                            {request.fromDate.split("T")[0]}
                                         </p>
                                     </div>
                                     <div className="flex flex-col">
                                         <p className="text-sm text-gray-500 mb-1">To Date</p>
                                         <p className="text-sm font-medium text-gray-900">
-                                            {request.toDate}
+                                            {request.toDate.split("T")[0]}
                                         </p>
                                     </div>
                                     <div className="flex flex-col">
